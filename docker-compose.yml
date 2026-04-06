@@ -14,7 +14,7 @@ services:
       # Port UDP a ouvrir et rediriger vers ce serveur dans la box / routeur
       - SERVERPORT=51820
       # Noms des clients (un par appareil, virgule pour en ajouter)
-      - PEERS=iphone
+      - PEERS=iphoneaerya
       # Serveur DNS utilise par les clients VPN (AdGuard Home, Pi-hole...) + fallback
       - PEERDNS=192.168.0.64,9.9.9.9
       - INTERNAL_SUBNET=10.13.13.0
@@ -22,13 +22,13 @@ services:
       - ALLOWEDIPS=0.0.0.0/0,::/0
       - LOG_CONFS=true
     volumes:
-      - ./config:/config
+      - /home/aerya/docker/homeguard:/config
       - /lib/modules:/lib/modules:ro
     ports:
       - 51820:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
-    restart: unless-stopped
+    restart: always
 
   peer-notify:
     image: alpine
@@ -39,9 +39,9 @@ services:
       # Laisser vide pour desactiver l'envoi Discord
       - DISCORD_WEBHOOK=
       # Peers a envoyer (meme valeur que PEERS ci-dessus)
-      - PEERS=iphone
+      - PEERS=iphoneaerya
     volumes:
-      - ./config:/config:ro
+      - /home/aerya/docker/homeguard:/config:ro
     restart: "no"
     command: >
       sh -c "
