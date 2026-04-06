@@ -1,7 +1,7 @@
 services:
-  wireguard:
+  homeguard:
     image: lscr.io/linuxserver/wireguard:latest
-    container_name: wireguard
+    container_name: homeguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -22,7 +22,7 @@ services:
       - ALLOWEDIPS=0.0.0.0/0,::/0
       - LOG_CONFS=true
     volumes:
-      - ./config:/config
+      - /home/aerya/docker/homeguard:/config
       - /lib/modules:/lib/modules:ro
     ports:
       - 51820:51820/udp
