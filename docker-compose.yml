@@ -31,7 +31,7 @@ services:
     restart: always
 
   peer-notify:
-    image: alpine
+    image: alpine:edge
     container_name: homeguard-notify
     depends_on:
       - wireguard
@@ -47,7 +47,7 @@ services:
       - sh
       - -c
       - |
-        apk add --no-cache -q -X https://dl-cdn.alpinelinux.org/alpine/edge/community qrencode curl
+        apk add --no-cache -q qrencode curl
         sleep 15
         for PEER in $$(echo $$PEERS | tr ',' ' '); do
           CONF=/config/peer_$${PEER}/peer_$${PEER}.conf
