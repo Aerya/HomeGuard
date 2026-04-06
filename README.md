@@ -47,18 +47,28 @@ Les peers sont définis dans la variable `PEERS` du `docker-compose.yml` (noms s
 - PEERS=iphone,laptop,tablet
 ```
 
-Après modification, relancer le conteneur :
+Après modification, relancer les conteneurs :
 
 ```bash
-docker compose up -d --force-recreate
+docker compose up -d --force-recreate wireguard peer-notify
 ```
+
+## Supprimer un peer (appareil)
+
+1. Retirer le nom du peer de `PEERS` dans le service `wireguard`
+2. Renseigner son nom dans `REMOVE_PEERS` dans le service `peer-notify` :
+   ```yaml
+   - REMOVE_PEERS=laptop
+   ```
+3. Relancer la stack — le dossier de config du peer est supprimé, WireGuard se régénère sans lui
+4. Vider `REMOVE_PEERS=` et relancer une dernière fois
 
 ## Récupérer la config d'un peer (QR code)
 
 Au démarrage, le service `peer-notify` génère automatiquement les QR codes. Pour les afficher :
 
 ```bash
-docker logs wireguard-notify
+docker logs homeguard-notify
 ```
 
 ### Envoyer le QR code sur Discord (optionnel)
@@ -81,7 +91,7 @@ docker compose restart peer-notify
 
 1. Installer **WireGuard** depuis l'[App Store](https://apps.apple.com/fr/app/wireguard/id1441195209)
 2. Ouvrir l'app → **`+`** (en haut à droite) → **Créer depuis un QR code**
-3. Scanner le QR code (depuis `docker logs wireguard-notify` ou le salon Discord)
+3. Scanner le QR code (depuis `docker logs homeguard-notify` ou le salon Discord)
 4. Donner un nom (ex : `Maison`) → **Ajouter la configuration VPN** → Autoriser
 
 ### Activer le VPN automatiquement (sauf sur le WiFi maison)
@@ -98,7 +108,7 @@ Le VPN s'activera automatiquement sur tous les réseaux sauf le WiFi maison. Dè
 
 1. Installer **WireGuard** depuis le [Play Store](https://play.google.com/store/apps/details?id=com.wireguard.android)
 2. **`+`** → **Scanner depuis QR code**
-3. Scanner le QR code (depuis `docker logs wireguard-notify` ou le salon Discord)
+3. Scanner le QR code (depuis `docker logs homeguard-notify` ou le salon Discord)
 4. Donner un nom → Autoriser l'ajout du VPN
 
 ### Activer le VPN automatiquement (sauf sur le WiFi maison)

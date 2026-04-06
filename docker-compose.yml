@@ -40,14 +40,22 @@ services:
       - DISCORD_WEBHOOK=
       # Peers a envoyer (meme valeur que PEERS ci-dessus)
       - PEERS=iphone
+      # Peers a supprimer (ex: iphone,laptop) — vider apres suppression et redemarrer wireguard
+      - REMOVE_PEERS=
     volumes:
-      - /home/aerya/docker/homeguard:/config:ro
+      - /home/aerya/docker/homeguard:/config
     restart: "no"
     command:
       - bash
       - -c
       - |
         apt-get update -qq && apt-get install -y -qq qrencode curl
+        if [ -n "$$REMOVE_PEERS" ]; then
+          for PEER in $$(echo $$REMOVE_PEERS | tr ',' ' '); do
+            rm -rf /config/peer_$${PEER}
+            echo "Peer $${PEER} supprime."
+          done
+        fi
         sleep 15
         for PEER in $$(echo $$PEERS | tr ',' ' '); do
           CONF=/config/peer_$${PEER}/peer_$${PEER}.conf
@@ -55,7 +63,8 @@ services:
           qrencode -t UTF8 -r $${CONF}
           if [ -n "$$DISCORD_WEBHOOK" ]; then
             qrencode -t PNG -r $${CONF} -o /tmp/$${PEER}.png
-            curl -sF "content=WireGuard peer : $${PEER}" -F "file=@/tmp/$${PEER}.png" "$$DISCORD_WEBHOOK"
+            curl -sF "content=WireGuard peer : $${PEER}" -F "file=@/tmp/$${PEER}.png" "$$DISCORD_WEBHOOK" > /dev/null
             echo "Envoye sur Discord."
           fi
         done
+        tail -f /dev/null
