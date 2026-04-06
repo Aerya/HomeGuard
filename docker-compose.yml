@@ -46,15 +46,15 @@ services:
     command: >
       sh -c "
         apk add --no-cache qrencode curl > /dev/null 2>&1 &&
-        sleep 5 &&
-        for PEER in $(echo $PEERS | tr ',' ' '); do
-          CONF=/config/peer_$${PEER}/peer_$${PEER}.conf &&
-          echo '=== '$${PEER}' ===' &&
-          qrencode -t UTF8 -r $${CONF} &&
-          if [ -n \"$${DISCORD_WEBHOOK}\" ]; then
-            qrencode -t PNG -r $${CONF} -o /tmp/$${PEER}.png &&
-            curl -sF \"content=Config WireGuard — peer : **$${PEER}**\" -F \"file=@/tmp/$${PEER}.png\" \"$${DISCORD_WEBHOOK}\" > /dev/null &&
-            echo 'Envoye sur Discord.'
-          fi
+        sleep 10 &&
+        for PEER in $$(echo $$PEERS | tr ',' ' '); do
+          CONF=/config/peer_$${PEER}/peer_$${PEER}.conf;
+          echo '=== '$${PEER}' ===';
+          qrencode -t UTF8 -r $${CONF};
+          if [ -n \"$$DISCORD_WEBHOOK\" ]; then
+            qrencode -t PNG -r $${CONF} -o /tmp/$${PEER}.png;
+            curl -sF \"content=Config WireGuard peer : $${PEER}\" -F \"file=@/tmp/$${PEER}.png\" \"$$DISCORD_WEBHOOK\" > /dev/null;
+            echo 'Envoye sur Discord.';
+          fi;
         done
       "
