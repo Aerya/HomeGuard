@@ -55,17 +55,33 @@ docker compose up -d --force-recreate
 
 ## Récupérer la config d'un peer (QR code)
 
+Au démarrage, le service `peer-notify` génère automatiquement les QR codes. Pour les afficher :
+
 ```bash
-docker exec -it wireguard /app/show-peer iphone
+docker logs wireguard-notify
 ```
 
-Un QR code ASCII s'affiche dans le terminal — à scanner depuis l'app WireGuard sur le smartphone.
+### Envoyer le QR code sur Discord (optionnel)
+
+Créer un webhook sur ton serveur Discord (**Paramètres du salon → Intégrations → Webhooks**), puis renseigner l'URL dans le `docker-compose.yml` :
+
+```yaml
+- DISCORD_WEBHOOK=https://discord.com/api/webhooks/XXXXXX/XXXXXX
+```
+
+Le QR code sera envoyé en image dans le salon Discord à chaque démarrage du conteneur.
+
+Pour forcer un renvoi sans redémarrer wireguard :
+
+```bash
+docker compose restart peer-notify
+```
 
 ## Configuration iOS (iPhone / iPad)
 
 1. Installer **WireGuard** depuis l'[App Store](https://apps.apple.com/fr/app/wireguard/id1441195209)
 2. Ouvrir l'app → **`+`** (en haut à droite) → **Créer depuis un QR code**
-3. Scanner le QR code affiché dans le terminal
+3. Scanner le QR code (depuis `docker logs wireguard-notify` ou le salon Discord)
 4. Donner un nom (ex : `Maison`) → **Ajouter la configuration VPN** → Autoriser
 
 ### Activer le VPN automatiquement (sauf sur le WiFi maison)
@@ -82,7 +98,7 @@ Le VPN s'activera automatiquement sur tous les réseaux sauf le WiFi maison. Dè
 
 1. Installer **WireGuard** depuis le [Play Store](https://play.google.com/store/apps/details?id=com.wireguard.android)
 2. **`+`** → **Scanner depuis QR code**
-3. Scanner le QR code affiché dans le terminal
+3. Scanner le QR code (depuis `docker logs wireguard-notify` ou le salon Discord)
 4. Donner un nom → Autoriser l'ajout du VPN
 
 ### Activer le VPN automatiquement (sauf sur le WiFi maison)
