@@ -1,0 +1,31 @@
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      # Remplacer par domaine ou IP publique du serveur DNS
+      - SERVERURL=vpn.mondomaine.com
+      # Port UDP à ouvrir et rediriger vers ce Docker dans la box / routeur
+      - SERVERPORT=51820
+      # Noms des clients (un par appareil, virgule pour en ajouter)
+      - PEERS=iphone
+      # Remplacer par l'IP du serveur DNS local, garde 9.9.9.9 en fallback
+      - PEERDNS=192.168.0.64,9.9.9.9
+      - INTERNAL_SUBNET=10.13.13.0
+      # Tout le trafic passe par le VPN (= tout le DNS passe par AdGuard Home)
+      - ALLOWEDIPS=0.0.0.0/0,::/0
+      - LOG_CONFS=true
+    volumes:
+      - ./config:/config
+      - /lib/modules:/lib/modules:ro
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
