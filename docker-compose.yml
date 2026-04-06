@@ -1,7 +1,7 @@
 services:
   wireguard:
     image: lscr.io/linuxserver/wireguard:latest
-    container_name: wireguard
+    container_name: homeguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -10,13 +10,13 @@ services:
       - PGID=1000
       - TZ=Europe/Paris
       # Adresse publique de ce serveur VPN (domaine ou IP) — c'est ce que le smartphone compose pour se connecter
-      - SERVERURL=vpn.mondomaine.com
+      - SERVERURL=homeguard.mondomaine.com
       # Port UDP a ouvrir et rediriger vers ce serveur dans la box / routeur
       - SERVERPORT=51820
       # Noms des clients (un par appareil, virgule pour en ajouter)
       - PEERS=iphone
       # Serveur DNS utilise par les clients VPN (AdGuard Home, Pi-hole...) + fallback
-      - PEERDNS=192.168.1.1,9.9.9.9
+      - PEERDNS=192.168.0.64,9.9.9.9
       - INTERNAL_SUBNET=10.13.13.0
       # Tout le trafic passe par le VPN (= tout le DNS passe par AdGuard Home)
       - ALLOWEDIPS=0.0.0.0/0,::/0
