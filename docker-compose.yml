@@ -14,7 +14,7 @@ services:
       # Port UDP a ouvrir et rediriger vers ce serveur dans la box / routeur
       - SERVERPORT=51820
       # Noms des clients (un par appareil, virgule pour en ajouter)
-      - PEERS=iphoneaerya
+      - PEERS=iphone
       # Serveur DNS utilise par les clients VPN (AdGuard Home, Pi-hole...) + fallback
       - PEERDNS=192.168.0.64,9.9.9.9
       - INTERNAL_SUBNET=10.13.13.0
@@ -39,22 +39,23 @@ services:
       # Laisser vide pour desactiver l'envoi Discord
       - DISCORD_WEBHOOK=
       # Peers a envoyer (meme valeur que PEERS ci-dessus)
-      - PEERS=iphoneaerya
+      - PEERS=iphone
     volumes:
       - /home/aerya/docker/homeguard:/config:ro
     restart: "no"
-    command: >
-      sh -c "
-        apk add --no-cache qrencode curl > /dev/null 2>&1 &&
-        sleep 10 &&
+    command:
+      - sh
+      - -c
+      - |
+        apk add --no-cache qrencode curl
+        sleep 15
         for PEER in $$(echo $$PEERS | tr ',' ' '); do
-          CONF=/config/peer_$${PEER}/peer_$${PEER}.conf;
-          echo '=== '$${PEER}' ===';
-          qrencode -t UTF8 -r $${CONF};
-          if [ -n \"$$DISCORD_WEBHOOK\" ]; then
-            qrencode -t PNG -r $${CONF} -o /tmp/$${PEER}.png;
-            curl -sF \"content=Config WireGuard peer : $${PEER}\" -F \"file=@/tmp/$${PEER}.png\" \"$$DISCORD_WEBHOOK\" > /dev/null;
-            echo 'Envoye sur Discord.';
-          fi;
+          CONF=/config/peer_$${PEER}/peer_$${PEER}.conf
+          echo "=== $${PEER} ==="
+          qrencode -t UTF8 -r $${CONF}
+          if [ -n "$$DISCORD_WEBHOOK" ]; then
+            qrencode -t PNG -r $${CONF} -o /tmp/$${PEER}.png
+            curl -sF "content=WireGuard peer : $${PEER}" -F "file=@/tmp/$${PEER}.png" "$$DISCORD_WEBHOOK"
+            echo "Envoye sur Discord."
+          fi
         done
-      "
