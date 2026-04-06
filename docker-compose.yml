@@ -31,7 +31,7 @@ services:
     restart: always
 
   peer-notify:
-    image: alpine:edge
+    image: debian:bookworm-slim
     container_name: homeguard-notify
     depends_on:
       - wireguard
@@ -44,10 +44,10 @@ services:
       - /home/aerya/docker/homeguard:/config:ro
     restart: "no"
     command:
-      - sh
+      - bash
       - -c
       - |
-        apk update -q && apk add --no-cache -q qrencode curl
+        apt-get update -qq && apt-get install -y -qq qrencode curl
         sleep 15
         for PEER in $$(echo $$PEERS | tr ',' ' '); do
           CONF=/config/peer_$${PEER}/peer_$${PEER}.conf
