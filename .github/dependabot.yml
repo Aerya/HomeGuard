@@ -5,13 +5,10 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "07:30"
+      time: "06:00"
       timezone: "Europe/Paris"
     open-pull-requests-limit: 10
     rebase-strategy: "auto"
-    labels:
-      - "dependencies"
-      - "github-actions"
     groups:
       minor-and-patch:
         update-types:
